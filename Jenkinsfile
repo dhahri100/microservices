@@ -1,25 +1,79 @@
 pipeline {
     agent any
 
+    environment {
+        SCANNER_HOME = tool "SonarQube-Scanner"  // Assuming 'SonarQube-Scanner' tool is configured in Jenkins
+        APP_NAME = "microservices-cartserv"
+        RELEASE = "1.0.0"
+        DOCKER_USER = "mouhib543"
+        DOCKER_PASS = 'dockerhub'
+        IMAGE_TAG = "${RELEASE}-${BUILD_NUMBER}"
+    }
+
     stages {
-        stage('Build & Tag Docker Image') {
+        stage('clean workspace') {
+            steps {
+                cleanWs()  // Clean workspace before starting
+            }
+        }
+
+        stage('Testing') {
             steps {
                 script {
-                    dir('src') {
+                 // Restore dependencies
+                bat 'dotnet restore'
 
-                    withDockerRegistry(credentialsId: 'docker-cred', toolName: 'docker') {
-                        sh "docker build -t adijaiswal/cartservice:latest ."
-                    }
-                        }
+                // Build the project
+                bat 'dotnet build'
+
+                // Run tests
+                bat 'dotnet test'
                 }
             }
         }
-        
+    
+        stage('SonarQube Analysis') {
+            steps {
+                script {
+                    withSonarQubeEnv('SonarQube-Server') {
+                        sh "${SCANNER_HOME}/bin/sonar-scanner"  // Execute SonarQube scanner
+                    }
+                }
+            }
+        }
+
+        stage("Quality Gate") {
+            steps {
+                timeout(time: 1, unit: 'HOURS') {
+                    waitForQualityGate abortPipeline: true  // Wait for SonarQube Quality Gate result
+                }
+            }
+        }
+
+        stage('Build Docker Image') {
+            steps {
+                script {
+                    // Build the Docker image using the Dockerfile in the directory
+                    docker.build("${DOCKER_USER}/${APP_NAME}:${IMAGE_TAG}")
+                }
+            }
+        }
+
+        stage("Trivy Image Scan") {
+            steps {
+                script {
+                    // Perform Trivy image scan
+                    sh "docker run -v /var/run/docker.sock:/var/run/docker.sock aquasec/trivy image ${DOCKER_USER}/${APP_NAME}:${IMAGE_TAG} --no-progress --exit-code 0 --severity HIGH,CRITICAL --format table --scanners vuln --timeout 50m > trivy_${APP_NAME}.txt"
+                }
+            }
+        }
+
         stage('Push Docker Image') {
             steps {
                 script {
-                    withDockerRegistry(credentialsId: 'docker-cred', toolName: 'docker') {
-                        sh "docker push adijaiswal/cartservice:latest "
+                    docker.withRegistry('', DOCKER_PASS) {
+                        // Push the Docker image to Docker Hub
+                        docker.image("${DOCKER_USER}/${APP_NAME}:${IMAGE_TAG}").push()
                     }
                 }
             }
