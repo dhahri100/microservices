@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        SCANNER_HOME = tool "SonarQube-Scanner"  // Assuming 'SonarQube-Scanner' tool is configured in Jenkins
+        SCANNER_HOME = tool "SonarQube-Scanner"  
         APP_NAME = "microservices-checkoutserv"
         RELEASE = "1.0.0"
         DOCKER_USER = "mouhib543"
@@ -63,5 +63,15 @@ pipeline {
                 }
             }
         }
+    
+        stage ('Cleanup Artifacts') {
+            steps {
+                script {
+                        sh "docker rmi ${DOCKER_USER}/${service}:${IMAGE_TAG}"  // Remove Docker image
+                    }
+                }
+            
+        }
+    
     }
 }
