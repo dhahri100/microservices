@@ -22,11 +22,7 @@ pipeline {
             steps {
                 script {
                     withSonarQubeEnv('SonarQube-Server') {
-                        sh "${SCANNER_HOME}/bin/sonar-scanner\ 
-                        -Dsonar.branch.name=${env.shippingservice}\
-                        -Dsonar.projectKey=${env.APP_NAME} \
-                        -Dsonar.sources=. \
-                        -Dsonar.branch.name=${env.shippingservice} \ "
+                        sh "${SCANNER_HOME}/bin/sonar-scanner -Dsonar.branch.name=${env.shippingservice} -Dsonar.projectKey=${env.APP_NAME}  -Dsonar.sources=. -Dsonar.branch.name=${env.shippingservice} "
                     }
                 }
             }
