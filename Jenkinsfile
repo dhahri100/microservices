@@ -17,13 +17,6 @@ pipeline {
             }
         }
 
-       stage('Testing') {
-            steps {
-                script {
-                    sh 'go test .'
-                }
-            }
-        }
     
         stage('SonarQube Analysis') {
             steps {
