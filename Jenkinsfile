@@ -2,12 +2,13 @@ pipeline {
     agent any
 
     environment {
-        SCANNER_HOME = tool "SonarQube-Scanner"  // Assuming 'SonarQube-Scanner' tool is configured in Jenkins
+        SCANNER_HOME = tool name: 'SonarQube-Scanner', type: 'hudson.plugins.sonar.SonarRunnerInstallation'  // Assuming 'SonarQube-Scanner' tool is configured in Jenkins
         APP_NAME = "microservices-shippingserv"
         RELEASE = "1.0.0"
         DOCKER_USER = "mouhib543"
         DOCKER_PASS = 'dockerhub'
         IMAGE_TAG = "${RELEASE}-${BUILD_NUMBER}"
+        SONAR_HOST_URL = 'http://localhost:9000'
     }
 
     stages {
@@ -22,7 +23,7 @@ pipeline {
             steps {
                 script {
                     withSonarQubeEnv('SonarQube-Server') {
-                        sh "${SCANNER_HOME}/bin/sonar-scanner"  // Execute SonarQube scanner
+                        sh "${SCANNER_HOME}/bin/sonar-scanner -Dsonar.host.url=${env.SONAR_HOST_URL} -Dsonar.projectKey=${env.APP_NAME} -Dsonar.sources=."
                     }
                 }
             }
