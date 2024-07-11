@@ -8,7 +8,6 @@ pipeline {
         DOCKER_USER = "mouhib543"
         DOCKER_PASS = 'dockerhub'
         IMAGE_TAG = "${RELEASE}-${BUILD_NUMBER}"
-        SONAR_HOST_URL = 'http://localhost:9000'
     }
 
     stages {
