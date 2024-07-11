@@ -2,18 +2,18 @@ pipeline {
     agent any
 
     environment {
-        APP_NAME = "microservices-application"
-        CHART_REPO = "your-helm-chart-repo"
-        CHART_NAME = "your-helm-chart-name"
-        NAMESPACE = "your-namespace"
-        GKE_CLUSTER = "your-gke-cluster"
-        GKE_ZONE = "your-gke-zone"
-        PROJECT_ID = "your-gcp-project-id"
-        SLACK_CHANNEL = '#your-slack-channel'
-        SLACK_CREDENTIALS_ID = 'your-slack-credentials-id'
-        DOCKER_REGISTRY = "your-docker-registry"
-        HELM_CHART_DIR = "your-helm-chart-directory"
-        ARGOCD_NAMESPACE = "your-argocd-namespace"
+        
+        CHART_REPO = 
+        CHART_NAME = 
+        NAMESPACE = 
+        GKE_CLUSTER = 
+        GKE_ZONE = 
+        PROJECT_ID = 
+        SLACK_CHANNEL = 
+        SLACK_CREDENTIALS_ID = 
+        DOCKER_REGISTRY = "mouhib543"
+         = 
+         = 
     }
 
     stages {
@@ -30,41 +30,22 @@ pipeline {
             }
         }
 
-        stages {
-        stage('Deploy To Kubernetes') {
-            steps {
-                
-                    sh "kubectl apply -f deployment-service.yml"
-                    
-                }
-            }
-        }
-        
-        stage('verify Deployment') {
-            steps {
-                
-                    sh "kubectl get svc -n webapps"
-                }
-            }
-        }
-    }
-
         stage('Deploy with Helm') {
             steps {
                 script {
                     // Deploy the application using Helm
                     sh """
-                        helm upgrade --install emailservice ${HELM_CHART_DIR}/emailservice --namespace default --set image.repository=${DOCKER_REGISTRY}/emailservice --set image.tag=latest
-                        helm upgrade --install checkoutservice ${HELM_CHART_DIR}/checkoutservice --namespace default --set image.repository=${DOCKER_REGISTRY}/checkoutservice --set image.tag=latest
-                        helm upgrade --install recommendationservice ${HELM_CHART_DIR}/recommendationservice --namespace default --set image.repository=${DOCKER_REGISTRY}/recommendationservice --set image.tag=latest
-                        helm upgrade --install frontend ${HELM_CHART_DIR}/frontend --namespace default --set image.repository=${DOCKER_REGISTRY}/frontend --set image.tag=latest
-                        helm upgrade --install paymentservice ${HELM_CHART_DIR}/paymentservice --namespace default --set image.repository=${DOCKER_REGISTRY}/paymentservice --set image.tag=latest
-                        helm upgrade --install productcatalogservice ${HELM_CHART_DIR}/productcatalogservice --namespace default --set image.repository=${DOCKER_REGISTRY}/productcatalogservice --set image.tag=latest
-                        helm upgrade --install cartservice ${HELM_CHART_DIR}/cartservice --namespace default --set image.repository=${DOCKER_REGISTRY}/cartservice --set image.tag=latest
-                        helm upgrade --install loadgenerator ${HELM_CHART_DIR}/loadgenerator --namespace default --set image.repository=${DOCKER_REGISTRY}/loadgenerator --set image.tag=latest
-                        helm upgrade --install currencyservice ${HELM_CHART_DIR}/currencyservice --namespace default --set image.repository=${DOCKER_REGISTRY}/currencyservice --set image.tag=latest
-                        helm upgrade --install shippingservice ${HELM_CHART_DIR}/shippingservice --namespace default --set image.repository=${DOCKER_REGISTRY}/shippingservice --set image.tag=latest
-                        helm upgrade --install adservice ${HELM_CHART_DIR}/adservice --namespace default --set image.repository=${DOCKER_REGISTRY}/adservice --set image.tag=latest
+                        helm upgrade --install emailservice ${}/emailservice --namespace default --set image.repository=${DOCKER_REGISTRY}/emailservice --set image.tag=latest
+                        helm upgrade --install checkoutservice ${}/checkoutservice --namespace default --set image.repository=${DOCKER_REGISTRY}/checkoutservice --set image.tag=latest
+                        helm upgrade --install recommendationservice ${}/recommendationservice --namespace default --set image.repository=${DOCKER_REGISTRY}/recommendationservice --set image.tag=latest
+                        helm upgrade --install frontend ${}/frontend --namespace default --set image.repository=${DOCKER_REGISTRY}/frontend --set image.tag=latest
+                        helm upgrade --install paymentservice ${}/paymentservice --namespace default --set image.repository=${DOCKER_REGISTRY}/paymentservice --set image.tag=latest
+                        helm upgrade --install productcatalogservice ${}/productcatalogservice --namespace default --set image.repository=${DOCKER_REGISTRY}/productcatalogservice --set image.tag=latest
+                        helm upgrade --install cartservice ${}/cartservice --namespace default --set image.repository=${DOCKER_REGISTRY}/cartservice --set image.tag=latest
+                        helm upgrade --install loadgenerator ${}/loadgenerator --namespace default --set image.repository=${DOCKER_REGISTRY}/loadgenerator --set image.tag=latest
+                        helm upgrade --install currencyservice ${}/currencyservice --namespace default --set image.repository=${DOCKER_REGISTRY}/currencyservice --set image.tag=latest
+                        helm upgrade --install shippingservice ${}/shippingservice --namespace default --set image.repository=${DOCKER_REGISTRY}/shippingservice --set image.tag=latest
+                        helm upgrade --install adservice ${}/adservice --namespace default --set image.repository=${DOCKER_REGISTRY}/adservice --set image.tag=latest
                     """
                 }
             }
@@ -75,23 +56,23 @@ pipeline {
                 script {
                     // Sync Argo CD application for canary release
                     sh """
-                        argocd app sync emailservice --namespace ${ARGOCD_NAMESPACE}
-                        argocd app sync checkoutservice --namespace ${ARGOCD_NAMESPACE}
-                        argocd app sync recommendationservice --namespace ${ARGOCD_NAMESPACE}
-                        argocd app sync frontend --namespace ${ARGOCD_NAMESPACE}
-                        argocd app sync paymentservice --namespace ${ARGOCD_NAMESPACE}
-                        argocd app sync productcatalogservice --namespace ${ARGOCD_NAMESPACE}
-                        argocd app sync cartservice --namespace ${ARGOCD_NAMESPACE}
-                        argocd app sync loadgenerator --namespace ${ARGOCD_NAMESPACE}
-                        argocd app sync currencyservice --namespace ${ARGOCD_NAMESPACE}
-                        argocd app sync shippingservice --namespace ${ARGOCD_NAMESPACE}
-                        argocd app sync adservice --namespace ${ARGOCD_NAMESPACE}
+                        argocd app sync emailservice --namespace ${}
+                        argocd app sync checkoutservice --namespace ${}
+                        argocd app sync recommendationservice --namespace ${}
+                        argocd app sync frontend --namespace ${}
+                        argocd app sync paymentservice --namespace ${}
+                        argocd app sync productcatalogservice --namespace ${}
+                        argocd app sync cartservice --namespace ${}
+                        argocd app sync loadgenerator --namespace ${}
+                        argocd app sync currencyservice --namespace ${}
+                        argocd app sync shippingservice --namespace ${}
+                        argocd app sync adservice --namespace ${}
                     """
                 }
             }
         }
 
-        
+    }    
     
 
     post {
@@ -129,4 +110,4 @@ pipeline {
         }
     }
 
-
+}
