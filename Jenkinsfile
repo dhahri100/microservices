@@ -39,8 +39,9 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 script {
+                    
                     // Build Docker image using the Dockerfile in directory
-                    docker.build("${DOCKER_USER}/${APP_NAME}:${IMAGE_TAG}" ,"src/shippingservice")
+                    docker.build("${DOCKER_USER}/${APP_NAME}:${IMAGE_TAG}")
                 }
             }
         }
