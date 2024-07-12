@@ -3,7 +3,7 @@ pipeline {
 
     environment {
         SCANNER_HOME = tool name: 'SonarQube-Scanner', type: 'hudson.plugins.sonar.SonarRunnerInstallation'  // Assuming 'SonarQube-Scanner' tool is configured in Jenkins
-        APP_NAME = "microservices-shippingserv"
+        APP_NAME = "shippingservice"
         RELEASE = "1.0.0"
         DOCKER_USER = "mouhib543"
         DOCKER_PASS = 'dockerhub'
