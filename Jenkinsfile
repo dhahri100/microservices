@@ -40,7 +40,7 @@ pipeline {
             steps {
                 script {
                     // Build Docker image using the Dockerfile in directory
-                    docker.build("${DOCKER_USER}/${APP_NAME}:${IMAGE_TAG}")
+                    docker.build("${DOCKER_USER}/${APP_NAME}:${IMAGE_TAG}" ,"./microservice-project_shippingservice")
                 }
             }
         }
