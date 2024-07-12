@@ -36,12 +36,13 @@ pipeline {
             }
         }*/
 
-        stage('Build Docker Image') {
+       
+        stage('Build & Tag Docker Image') {
             steps {
                 script {
-                    
-                    // Build Docker image using the Dockerfile in directory
-                    docker.build("${DOCKER_USER}/${APP_NAME}:${IMAGE_TAG}")
+                    withDockerRegistry(credentialsId: 'dockerhub', toolName: 'docker') {
+                        sh "docker build -t mouhib543/shippingservice:latest ."
+                    }
                 }
             }
         }
