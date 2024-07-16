@@ -65,7 +65,7 @@ pipeline {
         stage ('Cleanup Artifact') {
             steps {
                 script {
-                        sh "docker rmi ${DOCKER_USER}/${service}:${IMAGE_TAG}"  // Remove Docker image
+                        sh "docker rmi ${DOCKER_USER}/${APP_NAME}:${IMAGE_TAG}"  // Remove Docker image
                     }
                 }
             
