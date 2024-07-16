@@ -55,7 +55,7 @@ pipeline {
             steps {
                 script {
                     docker.withRegistry('', DOCKER_PASS) {
-                        // Push the Docker image to Docker Hub
+                        // Push Docker image to Docker Hub
                         docker.image("${DOCKER_USER}/${APP_NAME}:${IMAGE_TAG}").push()
                     }
                 }
