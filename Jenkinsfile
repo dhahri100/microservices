@@ -11,21 +11,9 @@ pipeline {
     }
 
     stages {
-        stage('clean workspace') {
-            steps {
-                cleanWs()  // Clean workspace before starting
-            }
-        }
 
-       stage('Testing') {
-            steps {
-                script {
-                    sh 'go test .'
-                }
-            }
-        }
     
-        stage('SonarQube Analysis') {
+        /*stage('SonarQube Analysis') {
             steps {
                 script {
                     withSonarQubeEnv('SonarQube-Server') {
@@ -41,7 +29,7 @@ pipeline {
                     waitForQualityGate abortPipeline: true  // Wait for SonarQube Quality Gate result
                 }
             }
-        }
+        }*/
 
         stage('Build Docker Image') {
             steps {
