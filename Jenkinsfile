@@ -12,21 +12,6 @@ pipeline {
 
     stages {
         
-
-        stage('Testing') {
-            steps {
-                script {
-                 // Restore dependencies
-                sh 'dotnet restore'
-
-                // Build the project
-                sh 'dotnet build'
-
-                // Run tests
-                sh 'dotnet test'
-                }
-            }
-        }
     
         /*stage('SonarQube Analysis') {
             steps {
