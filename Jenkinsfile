@@ -40,28 +40,31 @@ pipeline {
         stage('Build & Tag Docker Image') {
             steps {
                 script {
-                    withDockerRegistry(credentialsId: 'dockerhub', toolName: 'docker') {
-                        sh "docker build -t mouhib543/shippingservice:latest ."
+                    def imageTag = "${DOCKER_USER}/${APP_NAME}:${IMAGE_TAG}"
+                    
+                    withDockerRegistry([credentialsId: 'dockerhub',  toolName: 'docker']) {
+                        sh "docker build -t ${imageTag} ."
                     }
+                    
+                    env.IMAGE_TAG = imageTag
                 }
             }
         }
-
-        stage("Trivy Image Scan") {
+        stage('Trivy Image Scan') {
             steps {
                 script {
                     // Perform Trivy image scan
-                    sh "docker run -v /var/run/docker.sock:/var/run/docker.sock aquasec/trivy image ${DOCKER_USER}/${APP_NAME}:${IMAGE_TAG} --no-progress --exit-code 0 --severity HIGH,CRITICAL --format table --scanners vuln --timeout 50m > trivy_${APP_NAME}.txt"
+                    sh """
+                    docker run --rm -v /var/run/docker.sock:/var/run/docker.sock aquasec/trivy image ${env.IMAGE_TAG} --no-progress --exit-code 0 --severity HIGH,CRITICAL --format table --scanners vuln --timeout 50m > trivy_${APP_NAME}.txt
+                    """
                 }
             }
         }
-
         stage('Push Docker Image') {
             steps {
                 script {
-                    docker.withRegistry('', DOCKER_PASS) {
-                        // Push the Docker image to Docker Hub
-                        docker.image("${DOCKER_USER}/${APP_NAME}:${IMAGE_TAG}").push()
+                    docker.withRegistry('', 'dockerhub') {
+                        docker.image(env.IMAGE_TAG).push()
                     }
                 }
             }
