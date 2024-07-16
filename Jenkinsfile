@@ -3,7 +3,7 @@ pipeline {
 
     environment {
         SCANNER_HOME = tool "SonarQube-Scanner"  // Assuming 'SonarQube-Scanner' tool is configured in Jenkins
-        APP_NAME = "microservices-cartserv"
+        APP_NAME = "microservices-cartservice"
         RELEASE = "1.0.0"
         DOCKER_USER = "mouhib543"
         DOCKER_PASS = 'dockerhub'
