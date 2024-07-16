@@ -49,7 +49,7 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 script {
-                    // Build the Docker image using the Dockerfile in the directory
+                    // Build the Docker image using the Dockerfile in the director
                     docker.build("${DOCKER_USER}/${APP_NAME}:${IMAGE_TAG}")
                 }
             }
