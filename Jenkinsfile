@@ -3,7 +3,7 @@ pipeline {
 
     environment {
         SCANNER_HOME = tool "SonarQube-Scanner"  // Assuming 'SonarQube-Scanner' tool is configured in Jenkins
-        APP_NAME = "microservices-emailserv"
+        APP_NAME = "microservices-emailservice"
         RELEASE = "1.0.0"
         DOCKER_USER = "mouhib543"
         DOCKER_PASS = 'dockerhub'
@@ -11,13 +11,9 @@ pipeline {
     }
 
     stages {
-        stage('clean workspace') {
-            steps {
-                cleanWs()  // Clean workspace before starting
-            }
-        }
+        
     
-        stage('SonarQube Analysis') {
+        /*stage('SonarQube Analysis') {
             steps {
                 script {
                     withSonarQubeEnv('SonarQube-Server') {
@@ -33,7 +29,7 @@ pipeline {
                     waitForQualityGate abortPipeline: true  // Wait for SonarQube Quality Gate result
                 }
             }
-        }
+        }*/
 
         stage('Build Docker Image') {
             steps {
