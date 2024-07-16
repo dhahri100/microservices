@@ -17,13 +17,13 @@ pipeline {
             steps {
                 script {
                  // Restore dependencies
-                bat 'dotnet restore'
+                sh 'dotnet restore'
 
                 // Build the project
-                bat 'dotnet build'
+                sh 'dotnet build'
 
                 // Run tests
-                bat 'dotnet test'
+                sh 'dotnet test'
                 }
             }
         }
