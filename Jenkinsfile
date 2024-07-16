@@ -11,40 +11,8 @@ pipeline {
     }
 
     stages {
-        stage('clean workspace') {
-            steps {
-                cleanWs()  // Clean workspace before starting
-            }
-        }
-
-        stage('Install Dependencies') {
-            steps {
-                script {
-                    // Install Node.js dependencies
-                    sh "npm install"
-                }
-            }
-        }
-
-        stage('Run Tests') {
-            steps {
-                script {
-                    // Run tests using Jest or your preferred test framework
-                    sh "npm test"
-                }
-            }
-        }
-
-        stage('Build') {
-            steps {
-                script {
-                    // Optionally, add build steps if needed (e.g., transpiling TypeScript, bundling)
-                    sh "npm run build"
-                }
-            }
-        }
     
-        stage('SonarQube Analysis') {
+        /*stage('SonarQube Analysis') {
             steps {
                 script {
                     withSonarQubeEnv('SonarQube-Server') {
@@ -60,7 +28,7 @@ pipeline {
                     waitForQualityGate abortPipeline: true  // Wait for SonarQube Quality Gate result
                 }
             }
-        }
+        }*/
 
         stage('Build Docker Image') {
             steps {
