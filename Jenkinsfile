@@ -46,7 +46,7 @@ pipeline {
             steps {
                 script {
                     // Perform Trivy image scan
-                    sh "docker run -v /var/run/docker.sock:/var/run/docker.sock aquasec/trivy image ${DOCKER_USER}/${APP_NAME}:${IMAGE_TAG} --no-progress --exit-code 0 --severity HIGH,CRITICAL --format table --scanners vuln --timeout 50m > trivy_${APP_NAME}.txt"
+                    sh "docker run -v /var/run/docker.sock:/var/run/docker.sock aquasec/trivy image ${DOCKER_USER}/${APP_NAME}:${IMAGE_TAG} --no-progress --exit-code 0 --severity HIGH,CRITICAL --format table --scanners vuln --timeout 50m | tee trivy_${APP_NAME}.txt "
                 }
             }
         }
@@ -62,13 +62,18 @@ pipeline {
             }
         }
 
-        /*stage ('Cleanup Artifact') {
+        stage ('Cleanup Artifact') {
             steps {
                 script {
                         sh "docker rmi ${DOCKER_USER}/${APP_NAME}:${IMAGE_TAG}"  // Remove Docker image
                     }
                 }
             
-        }*/
+        }
+    post {
+        always {
+            archiveArtifacts artifacts: 'trivy_${APP_NAME}.txt', allowEmptyArchive: true
+            }
+        }
     }
 }
