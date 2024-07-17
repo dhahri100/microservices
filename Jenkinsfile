@@ -2,37 +2,15 @@ pipeline {
     agent any
 
     environment {
-        SCANNER_HOME = tool name: 'SonarQube-Scanner', type: 'hudson.plugins.sonar.SonarRunnerInstallation'  // Assuming 'SonarQube-Scanner' tool is configured in Jenkins
+        SCANNER_HOME = tool name: 'SonarQube-Scanner', type: 'hudson.plugins.sonar.SonarRunnerInstallation'
         APP_NAME = "shippingservice"
         RELEASE = "1.0.0"
         DOCKER_USER = "mouhib543"
-        DOCKER_PASS = 'dockerhub'
+        DOCKER_PASS = "dockerhub"  
         IMAGE_TAG = "${RELEASE}-${BUILD_NUMBER}"
     }
 
     stages {
-        
-
-    
-        /*stage('SonarQube Analysis') {
-            steps {
-                script {
-                    withSonarQubeEnv('SonarQube-Server') {
-                        sh "${SCANNER_HOME}/bin/sonar-scanner -Dsonar.projectKey=${env.APP_NAME}  -Dsonar.sources=.  "
-                    }
-                }
-            }
-        }
-
-        stage("Quality Gate") {
-            steps {
-                timeout(time: 1, unit: 'HOURS') {
-                    waitForQualityGate abortPipeline: true  // Wait for SonarQube Quality Gate result
-                }
-            }
-        }*/
-
-       
         stage('Build Docker Image') {
             steps {
                 script {
@@ -45,8 +23,8 @@ pipeline {
         stage("Trivy Image Scan") {
             steps {
                 script {
-                    // Perform Trivy image scan
-                    sh "docker run -v /var/run/docker.sock:/var/run/docker.sock aquasec/trivy image ${DOCKER_USER}/${APP_NAME}:${IMAGE_TAG} --no-progress --exit-code 0 --severity HIGH,CRITICAL --format table --scanners vuln --timeout 50m | tee trivy_${APP_NAME}.txt "
+                    // Perform Trivy image scan and save results to a file
+                    sh "docker run -v /var/run/docker.sock:/var/run/docker.sock aquasec/trivy image ${DOCKER_USER}/${APP_NAME}:${IMAGE_TAG} --no-progress --exit-code 0 --severity HIGH,CRITICAL --format table --scanners vuln --timeout 50m | tee trivy_${APP_NAME}.txt"
                 }
             }
         }
@@ -65,15 +43,17 @@ pipeline {
         stage ('Cleanup Artifact') {
             steps {
                 script {
-                        sh "docker rmi ${DOCKER_USER}/${APP_NAME}:${IMAGE_TAG}"  // Remove Docker image
-                    }
+                    // Remove the local Docker image
+                    sh "docker rmi ${DOCKER_USER}/${APP_NAME}:${IMAGE_TAG}"  
                 }
-            
+            }
         }
+    }
+
     post {
         always {
-            archiveArtifacts artifacts: 'trivy_${APP_NAME}.txt', allowEmptyArchive: true
-            }
+            // Archive Trivy scan results
+            archiveArtifacts artifacts: "trivy_${APP_NAME}.txt", allowEmptyArchive: true
         }
     }
 }
