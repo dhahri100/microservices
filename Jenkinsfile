@@ -27,12 +27,5 @@ pipeline {
                 }
             }
         }
-        stage('Deploy with Argo CD') {
-            steps {
-                script {
-                    sh "argocd app sync ${params.SERVICE_NAME}"
-                }
-            }
-        }
     }
 }
