@@ -1,3 +1,9 @@
+images:
+  repository: mouhib543
+  tag: latest
+
+
+
 serviceAccounts:
   # Specifies whether service accounts should be created.
   create: true
@@ -218,3 +224,8 @@ cartDatabase:
     endpointAddress: ""
     endpointPort: ""
     certificate: ""
+# @TODO: This service is not currently available in Helm.
+# https://github.com/GoogleCloudPlatform/microservices-demo/tree/main/kustomize/components/shopping-assistant
+shoppingAssistantService:
+  create: false
+  name: shoppingassistantservice
