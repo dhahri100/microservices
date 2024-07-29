@@ -67,7 +67,7 @@ spec:
               - ALL
           privileged: false
           readOnlyRootFilesystem: true
-        image: {{ .Values.images.repository }}/{{ .Values.emailService.name }}:{{ .Values.images.tag | default .Chart.AppVersion }}
+        image: {{ .Values.emailService.image.repository }}:{{ .Values.emailService.image.tag | default "latest" }}
         ports:
         - containerPort: 8080
         env:

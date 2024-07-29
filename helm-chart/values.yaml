@@ -194,7 +194,7 @@ shippingService:
   name: shippingservice
   image:
     repository: mouhib543/microservices-shippingservice
-    tag: "latest" # or specify the correct tag
+    tag: "1.0.0-31" # or specify the correct tag
   resources:
     requests:
       cpu: 100m
