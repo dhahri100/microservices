@@ -44,7 +44,7 @@ adService:
   name: adservice
   image:
     repository: mouhib543/microservices-adservice
-    tag: "latest" # or specify the correct tag
+    tag: "1.0.0-6" # or specify the correct tag
   resources:
     requests:
       cpu: 200m
@@ -58,7 +58,7 @@ cartService:
   name: cartservice
   image:
     repository: mouhib543/microservices-cartservice
-    tag: "latest" # or specify the correct tag
+    tag: "1.0.0-10" # or specify the correct tag
   resources:
     requests:
       cpu: 200m
@@ -72,7 +72,7 @@ checkoutService:
   name: checkoutservice
   image:
     repository: mouhib543/microservices-checkoutservice
-    tag: "latest" # or specify the correct tag
+    tag: "1.0.0-5" # or specify the correct tag
   resources:
     requests:
       cpu: 100m
@@ -86,7 +86,7 @@ currencyService:
   name: currencyservice
   image:
     repository: mouhib543/microservices-currencyservice
-    tag: "latest" # or specify the correct tag
+    tag: "1.0.0-5" # or specify the correct tag
   resources:
     requests:
       cpu: 100m
@@ -100,7 +100,7 @@ emailService:
   name: emailservice
   image:
     repository: mouhib543/microservices-emailservice
-    tag: "latest" # or specify the correct tag
+    tag: "1.0.0-5" # or specify the correct tag
   resources:
     requests:
       cpu: 100m
@@ -127,7 +127,7 @@ frontend:
       labelValue: ingressgateway
   image:
     repository: mouhib543/microservices-frontend
-    tag: "latest" # or specify the correct tag
+    tag: "1.0.0-5" # or specify the correct tag
   resources:
     requests:
       cpu: 100m
@@ -141,8 +141,8 @@ loadGenerator:
   name: loadgenerator
   checkFrontendInitContainer: true
   image:
-    repository: mouhib543/microservices-loadgenerator
-    tag: "latest" # or specify the correct tag
+    repository: mouhib543/microservices-loadgenservice
+    tag: "1.0.0-6" # or specify the correct tag
   resources:
     requests:
       cpu: 300m
@@ -156,7 +156,7 @@ paymentService:
   name: paymentservice
   image:
     repository: mouhib543/microservices-paymentservice
-    tag: "latest" # or specify the correct tag
+    tag: "1.0.0-5" # or specify the correct tag
   resources:
     requests:
       cpu: 100m
@@ -172,7 +172,7 @@ productCatalogService:
   extraLatency: ""
   image:
     repository: mouhib543/microservices-productcatalogservice
-    tag: "latest" # or specify the correct tag
+    tag: "1.0.0-5" # or specify the correct tag
   resources:
     requests:
       cpu: 100m
@@ -186,7 +186,7 @@ recommendationService:
   name: recommendationservice
   image:
     repository: mouhib543/microservices-recommendationservice
-    tag: "latest" # or specify the correct tag
+    tag: "1.0.0-5" # or specify the correct tag
   resources:
     requests:
       cpu: 100m
@@ -224,8 +224,7 @@ cartDatabase:
     endpointAddress: ""
     endpointPort: ""
     certificate: ""
-# @TODO: This service is not currently available in Helm.
-# https://github.com/GoogleCloudPlatform/microservices-demo/tree/main/kustomize/components/shopping-assistant
+
 shoppingAssistantService:
   create: false
   name: shoppingassistantservice
