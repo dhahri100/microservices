@@ -15,7 +15,7 @@ pipeline {
                 steps {
                     script {
                         // Build the Docker image using the Dockerfile in the service directory
-                        docker.build("${DOCKER_REPO}/${APP_NAME}:${IMAGE_TAG}", "path/to/${APP_NAME}")
+                        docker.build("${DOCKER_REPO}/${APP_NAME}:${IMAGE_TAG}")
                     }
                 }
             }
