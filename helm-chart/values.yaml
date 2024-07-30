@@ -2,6 +2,10 @@ images:
   repository: mouhib543
   tag: latest
 
+istio:
+  enabled: true
+  security:
+    enabled: true
 
 
 serviceAccounts:
