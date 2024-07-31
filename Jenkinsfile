@@ -27,13 +27,6 @@ pipeline {
                 }
             }
         }
-        stage('Deploy with Argo CD') {
-            steps {
-                script {
-                    // Trigger Argo CD to sync the updated Helm chart
-                    sh "argocd app sync ${params.SERVICE_NAME}"
-                }
-            }
-        }
+        
     }
 }
