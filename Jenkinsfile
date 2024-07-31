@@ -5,25 +5,38 @@ pipeline {
         string(name: 'IMAGE_TAG', defaultValue: '', description: 'Docker image tag for the service')
     }
     stages {
-        stage('Prepare Deployment') {
+        stage('Prepare Environment') {
             steps {
                 script {
                     if (params.APP_NAME && params.IMAGE_TAG) {
-                        withKubeCredentials(kubectlCredentials: [[caCertificate: '', clusterName: 'gke', contextName: '', credentialsId: '', namespace: 'microservices', serverUrl: 'http://34.46.5.46']]) {
-                        // Perform Helm upgrade or install
                         sh """
-                            helm upgrade --install ${params.APP_NAME} ./helm/${params.APP_NAME} \
-                            --set image.repository=mouhib543/${params.APP_NAME} \
-                            --set image.tag=${params.IMAGE_TAG}
+                            # Ensure namespace exists
+                            kubectl get namespace microservices || kubectl create namespace microservices
+                            
+                            # Update values.yaml with new image tag for the specific service
+                            yq e '.${params.APP_NAME}.image.tag = "${params.IMAGE_TAG}"' -i ./helm-chart/values.yaml
                         """
-                    } 
-                    else {
-                        error "SERVICE_NAME and IMAGE_TAG parameters are required"
+                    } else {
+                        error "APP_NAME and IMAGE_TAG parameters are required"
                     }
                 }
             }
         }
-        
+        stage('Deploy Service') {
+            steps {
+                script {
+                    if (params.APP_NAME && params.IMAGE_TAG) {
+                        withKubeCredentials(kubectlCredentials: [[caCertificate: '', clusterName: 'gke', contextName: '', credentialsId: '', namespace: 'microservices', serverUrl: 'http://34.46.5.46']]) {
+                            sh """
+                                helm upgrade --install microservices-release ./helm-chart -f ./helm-chart/values.yaml \
+                                --namespace microservices
+                            """
+                        }
+                    } else {
+                        error "APP_NAME and IMAGE_TAG parameters are required"
+                    }
+                }
+            }
+        }
     }
-}
 }
