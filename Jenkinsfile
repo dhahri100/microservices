@@ -11,8 +11,7 @@ pipeline {
                     if (params.APP_NAME && params.IMAGE_TAG) {
                         sh """
                             # Ensure namespace exists
-                            kubectl get namespace microservices || kubectl create namespace microservices
-                            
+                            kubectl get namespace microservices || kubectl create namespace prod
                             # Update values.yaml with new image tag for the specific service
                             yq e '.${params.APP_NAME}.image.tag = "${params.IMAGE_TAG}"' -i ./helm-chart/values.yaml
                         """
