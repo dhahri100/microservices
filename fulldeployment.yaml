@@ -22,7 +22,7 @@ spec:
       serviceAccountName: app-adservice
       containers:
       - name: server
-        image: mohamedabid1/adservice:latest
+        image: mouhib543/microservices-adservice:1.0.0-6
         imagePullPolicy: Always 
         ports:
         - containerPort: 9555
@@ -96,7 +96,7 @@ spec:
       serviceAccountName: app-checkout
       containers:
       - name: server
-        image: mohamedabid1/checkout:latest
+        image: mouhib543/microservices-checkoutservice:1.0.0-5
         imagePullPolicy: Always 
         ports:
         - containerPort: 5050
@@ -184,7 +184,7 @@ spec:
       serviceAccountName: app-cart
       containers:
       - name: server
-        image: mohamedabid1/cart:latest
+        image: mouhib543/microservices-cartservice:1.0.0-10
         imagePullPolicy: Always 
         ports:
         - containerPort: 7070
@@ -258,7 +258,7 @@ spec:
       serviceAccountName: app-email
       containers:
       - name: server
-        image: mohamedabid1/email:latest
+        image: mouhib543/microservices-emailservice:1.0.0-5
         imagePullPolicy: Always 
         ports:
         - containerPort: 8080
@@ -334,7 +334,7 @@ spec:
       serviceAccountName: app-currency
       containers:
       - name: server
-        image: mohamedabid1/currency:latest
+        image: mouhib543/microservices-currencyservice:1.0.0-5
         imagePullPolicy: Always 
         ports:
         - containerPort: 7000
@@ -410,7 +410,7 @@ spec:
       serviceAccountName: app-productcatalogue
       containers:
       - name: server
-        image: mohamedabid1/productcatalogue:latest
+        image: mouhib543/microservices-productcatalogservice:1.0.0-5
         imagePullPolicy: Always 
         ports:
         - containerPort: 3550
@@ -500,7 +500,7 @@ spec:
                 - ALL
             privileged: false
             readOnlyRootFilesystem: true
-          image: mohamedabid1/frontend:1.0
+          image: mouhib543/microservices-frontend:1.0.0-5
           imagePullPolicy: Always
           ports:
           - containerPort: 8080
@@ -531,68 +531,7 @@ spec:
               cpu: 200m
               memory: 128Mi
 ---
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: frontend-v2
-spec:
-  selector:
-    matchLabels:
-      app: frontend
-  template:
-    metadata:
-      labels:
-        app: frontend
-        version: v2
-      annotations:
-        sidecar.istio.io/rewriteAppHTTPProbers: "true"
-    spec:
-      serviceAccountName: app-frontend
-      securityContext:
-        fsGroup: 1000
-        runAsGroup: 1000
-        runAsNonRoot: true
-        runAsUser: 1000
-      containers:
-        - name: server
-          securityContext:
-            allowPrivilegeEscalation: false
-            capabilities:
-              drop:
-                - ALL
-            privileged: false
-            readOnlyRootFilesystem: true
-          image: mohamedabid1/frontend:2.0
-          imagePullPolicy: Always
-          ports:
-          - containerPort: 8080
-          env:
-          - name: PORT
-            value: "8080"
-          - name: PRODUCT_CATALOG_SERVICE_ADDR
-            value: "productcatalogue:3550"
-          - name: CURRENCY_SERVICE_ADDR
-            value: "currency:7000"
-          - name: CART_SERVICE_ADDR
-            value: "cart:7070"
-          - name: RECOMMENDATION_SERVICE_ADDR
-            value: "recommendation:8080"
-          - name: SHIPPING_SERVICE_ADDR
-            value: "shipping:50051"
-          - name: CHECKOUT_SERVICE_ADDR
-            value: "checkout:5050"
-          - name: AD_SERVICE_ADDR
-            value: "adservice:9555"
-          - name: ENABLE_PROFILER
-            value: "0"
-          resources:
-            requests:
-              cpu: 100m
-              memory: 64Mi
-            limits:
-              cpu: 200m
-              memory: 128Mi
----
+
 apiVersion: v1
 kind: Service
 metadata:
@@ -633,7 +572,7 @@ spec:
       serviceAccountName: app-payment
       containers:
       - name: server
-        image: mohamedabid1/payment:latest
+        image: mouhib543/microservices-paymentservice:1.0.0-5
         imagePullPolicy: Always 
         ports:
         - containerPort: 50051
@@ -709,7 +648,7 @@ spec:
       serviceAccountName: app-recommandation
       containers:
       - name: server
-        image: mohamedabid1/recommandation:latest
+        image: mouhib543/microservices-recommendationservice:1.0.0-5
         imagePullPolicy: Always 
         ports:
         - containerPort: 8080
@@ -876,7 +815,7 @@ spec:
               - ALL
           privileged: false
           readOnlyRootFilesystem: true
-        image: mohamedabid1/shippingsvc:latest
+        image: mouhib543/microservices-shippingservice:1.0.0-31
         ports:
         - containerPort: 50051
         env:
