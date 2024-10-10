@@ -3,16 +3,15 @@ pipeline {
 
     environment {
         SCANNER_HOME = tool "SonarQube-Scanner"  // Assuming 'SonarQube-Scanner' tool is configured in Jenkins
-        APP_NAME = "microservices-frontend"
+        APP_NAME = "microservices-frontend"  // Name of the frontend service
         RELEASE = "1.0.0"
-        DOCKER_USER = "mouhib543"
-        DOCKER_PASS = 'dockerhub'
+        DOCKER_USER = "mouhib543"  // Your DockerHub username
+        DOCKER_PASS = "dockerhub"  
         IMAGE_TAG = "${RELEASE}-${BUILD_NUMBER}"
     }
 
     stages {
 
-    
         /*stage('SonarQube Analysis') {
             steps {
                 script {
@@ -63,10 +62,15 @@ pipeline {
         stage ('Cleanup Artifact') {
             steps {
                 script {
-                        sh "docker rmi ${DOCKER_USER}/${APP_NAME}:${IMAGE_TAG}"  // Remove Docker image
-                    }
+                    sh "docker rmi ${DOCKER_USER}/${APP_NAME}:${IMAGE_TAG}"  // Remove Docker image
                 }
-            
+            }
+        }
+    }
+
+    post {
+        always {
+            archiveArtifacts artifacts: "trivy_${APP_NAME}.txt", allowEmptyArchive: true  // Archive Trivy scan results
         }
     }
 }
