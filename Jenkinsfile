@@ -3,6 +3,9 @@ pipeline {
 
     environment {
         SCANNER_HOME = tool name: 'SonarQube-Scanner', type: 'hudson.plugins.sonar.SonarRunnerInstallation'
+        SONAR_PROJECT_KEY = "shippingservice"  // Specify your project key here
+        SONAR_PROJECT_NAME = "Shipping Service"  // Optional: Give your project a name
+        SONAR_PROJECT_VERSION = "1.0"
         APP_NAME = "shippingservice"
         RELEASE = "1.0.0"
         DOCKER_REPO = "microservices"
@@ -17,7 +20,11 @@ pipeline {
             steps {
                 script {
                     withSonarQubeEnv('SonarQube-Server') {
-                        sh "${SCANNER_HOME}/bin/sonar-scanner"  // Execute SonarQube scanner
+                        sh "${SCANNER_HOME}/bin/sonar-scanner \
+                        -Dsonar.projectKey=${SONAR_PROJECT_KEY} \
+                        -Dsonar.projectName=${SONAR_PROJECT_NAME} \
+                        -Dsonar.projectVersion=${SONAR_PROJECT_VERSION} \
+                        -Dsonar.sources=."
                     }
                 }
             }
@@ -34,7 +41,6 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 script {
-                    // Build the Docker image using the Dockerfile in the directory
                     docker.build("${DOCKER_USER}/${APP_NAME}:${IMAGE_TAG}")
                 }
             }
@@ -43,7 +49,6 @@ pipeline {
         stage("Trivy Image Scan") {
             steps {
                 script {
-                    // Perform Trivy image scan and save results to a file
                     sh "docker run -v /var/run/docker.sock:/var/run/docker.sock aquasec/trivy image ${DOCKER_USER}/${APP_NAME}:${IMAGE_TAG} --no-progress --exit-code 0 --severity HIGH,CRITICAL --format table --scanners vuln --timeout 50m | tee trivy_${APP_NAME}.txt"
                 }
             }
@@ -53,7 +58,6 @@ pipeline {
             steps {
                 script {
                     docker.withRegistry('', DOCKER_PASS) {
-                        // Push Docker image to Docker Hub
                         docker.image("${DOCKER_USER}/${APP_NAME}:${IMAGE_TAG}").push()
                     }
                 }
@@ -63,8 +67,7 @@ pipeline {
         stage ('Cleanup Artifact') {
             steps {
                 script {
-                    // Remove the local Docker image
-                    sh "docker rmi ${DOCKER_USER}/${APP_NAME}:${IMAGE_TAG}"  
+                    sh "docker rmi ${DOCKER_USER}/${APP_NAME}:${IMAGE_TAG}"
                 }
             }
         }
@@ -72,7 +75,6 @@ pipeline {
 
     post {
         always {
-            // Archive Trivy scan results
             archiveArtifacts artifacts: "trivy_${APP_NAME}.txt", allowEmptyArchive: true
         }
     }
