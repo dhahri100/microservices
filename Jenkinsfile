@@ -6,9 +6,9 @@ pipeline {
         SONAR_PROJECT_KEY = "shippingservice"  // Specify your project key here
         SONAR_PROJECT_NAME = "Shipping Service"  // Optional: Give your project a name
         SONAR_PROJECT_VERSION = "1.0"
-        APP_NAME = "microservices-shippingservice"
+        APP_NAME = "shippingservice"  // The name of the image (shippingservice)
         RELEASE = "1.0.0"
-        DOCKER_USER = "mouhib543"
+        DOCKER_USER = "mouhib19"  // Your DockerHub username
         DOCKER_PASS = "dockerhub"  
         IMAGE_TAG = "${RELEASE}-${BUILD_NUMBER}"
     }
@@ -43,7 +43,7 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 script {
-                    docker.build("${DOCKER_USER}/${APP_NAME}:${IMAGE_TAG}")
+                    docker.build("${DOCKER_USER}/microservices-${APP_NAME}:${IMAGE_TAG}")
                 }
             }
         }
@@ -51,7 +51,7 @@ pipeline {
         /*stage("Trivy Image Scan") {
             steps {
                 script {
-                    sh "docker run -v /var/run/docker.sock:/var/run/docker.sock aquasec/trivy image ${DOCKER_USER}/${APP_NAME}:${IMAGE_TAG} --no-progress --exit-code 0 --severity HIGH,CRITICAL --format table --scanners vuln --timeout 50m | tee trivy_${APP_NAME}.txt"
+                    sh "docker run -v /var/run/docker.sock:/var/run/docker.sock aquasec/trivy image ${DOCKER_USER}/microservices-${APP_NAME}:${IMAGE_TAG} --no-progress --exit-code 0 --severity HIGH,CRITICAL --format table --scanners vuln --timeout 50m | tee trivy_${APP_NAME}.txt"
                 }
             }
         }*/
@@ -60,7 +60,7 @@ pipeline {
             steps {
                 script {
                     docker.withRegistry('https://index.docker.io/v1/', DOCKER_PASS) {
-                        docker.image("${DOCKER_USER}/${APP_NAME}:${IMAGE_TAG}").push()
+                        docker.image("${DOCKER_USER}/microservices-${APP_NAME}:${IMAGE_TAG}").push()
                     }
                 }
             }
@@ -69,7 +69,7 @@ pipeline {
         stage ('Cleanup Artifact') {
             steps {
                 script {
-                    sh "docker rmi ${DOCKER_USER}/${APP_NAME}:${IMAGE_TAG}"
+                    sh "docker rmi ${DOCKER_USER}/microservices-${APP_NAME}:${IMAGE_TAG}"
                 }
             }
         }
