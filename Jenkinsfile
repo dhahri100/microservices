@@ -6,7 +6,7 @@ pipeline {
         SONAR_PROJECT_KEY = "shippingservice"  // Specify your project key here
         SONAR_PROJECT_NAME = "Shipping Service"  // Optional: Give your project a name
         SONAR_PROJECT_VERSION = "1.0"
-        APP_NAME = "shippingservice"
+        APP_NAME = "microservices-shippingservice"
         RELEASE = "1.0.0"
         DOCKER_USER = "mouhib543"
         DOCKER_PASS = "dockerhub"  
