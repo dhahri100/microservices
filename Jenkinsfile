@@ -4,7 +4,7 @@ pipeline {
     environment {
         SCANNER_HOME = tool name: 'SonarQube-Scanner', type: 'hudson.plugins.sonar.SonarRunnerInstallation'
         SONAR_PROJECT_KEY = "microservices-frontend"  // Specify your project key here
-        SONAR_PROJECT_NAME = "Microservices Frontend"  // Optional: Give your project a name
+        SONAR_PROJECT_NAME = "Frontend service"  // Optional: Give your project a name
         SONAR_PROJECT_VERSION = "1.0"
         APP_NAME = "frontend"  // The name of the image (frontend)
         RELEASE = "1.0.0"
