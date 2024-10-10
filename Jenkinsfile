@@ -3,10 +3,10 @@ pipeline {
 
     environment {
         SCANNER_HOME = tool "SonarQube-Scanner"  // Assuming 'SonarQube-Scanner' tool is configured in Jenkins
-        APP_NAME = "microservices-paymentservice"
+        APP_NAME = "paymentservice"  // The name of the image (paymentservice)
         RELEASE = "1.0.0"
-        DOCKER_USER = "mouhib543"
-        DOCKER_PASS = 'dockerhub'
+        DOCKER_USER = "mouhib543"  // Your DockerHub username
+        DOCKER_PASS = "dockerhub"  
         IMAGE_TAG = "${RELEASE}-${BUILD_NUMBER}"
     }
 
@@ -34,7 +34,7 @@ pipeline {
             steps {
                 script {
                     // Build the Docker image using the Dockerfile in the directory
-                    docker.build("${DOCKER_USER}/${APP_NAME}:${IMAGE_TAG}")
+                    docker.build("${DOCKER_USER}/microservices-${APP_NAME}:${IMAGE_TAG}")
                 }
             }
         }
@@ -43,7 +43,7 @@ pipeline {
             steps {
                 script {
                     // Perform Trivy image scan
-                    sh "docker run -v /var/run/docker.sock:/var/run/docker.sock aquasec/trivy image ${DOCKER_USER}/${APP_NAME}:${IMAGE_TAG} --no-progress --exit-code 0 --severity HIGH,CRITICAL --format table --scanners vuln --timeout 50m > trivy_${APP_NAME}.txt"
+                    sh "docker run -v /var/run/docker.sock:/var/run/docker.sock aquasec/trivy image ${DOCKER_USER}/microservices-${APP_NAME}:${IMAGE_TAG} --no-progress --exit-code 0 --severity HIGH,CRITICAL --format table --scanners vuln --timeout 50m > trivy_${APP_NAME}.txt"
                 }
             }
         }
@@ -51,9 +51,9 @@ pipeline {
         stage('Push Docker Image') {
             steps {
                 script {
-                    docker.withRegistry('', DOCKER_PASS) {
+                    docker.withRegistry('https://index.docker.io/v1/', DOCKER_PASS) {
                         // Push the Docker image to Docker Hub
-                        docker.image("${DOCKER_USER}/${APP_NAME}:${IMAGE_TAG}").push()
+                        docker.image("${DOCKER_USER}/microservices-${APP_NAME}:${IMAGE_TAG}").push()
                     }
                 }
             }
@@ -62,10 +62,15 @@ pipeline {
         stage ('Cleanup Artifact') {
             steps {
                 script {
-                        sh "docker rmi ${DOCKER_USER}/${APP_NAME}:${IMAGE_TAG}"  // Remove Docker image
-                    }
+                    sh "docker rmi ${DOCKER_USER}/microservices-${APP_NAME}:${IMAGE_TAG}"  // Remove Docker image
                 }
-            
+            }
+        }
+    }
+
+    post {
+        always {
+            archiveArtifacts artifacts: "trivy_${APP_NAME}.txt", allowEmptyArchive: true
         }
     }
 }
