@@ -20,12 +20,15 @@ pipeline {
             steps {
                 script {
                     withSonarQubeEnv('SonarQube-Server') {
-                        sh "${SCANNER_HOME}/bin/sonar-scanner \
-                        -Dsonar.projectKey=${SONAR_PROJECT_KEY} \
-                        -Dsonar.projectName=${SONAR_PROJECT_NAME} \
-                        -Dsonar.projectVersion=${SONAR_PROJECT_VERSION} \
-                        -Dsonar.sources=."
+                    sh '''
+                        /var/lib/jenkins/tools/hudson.plugins.sonar.SonarRunnerInstallation/SonarQube-Scanner/bin/sonar-scanner \
+                        -Dsonar.projectKey=shippingservice \
+                        -Dsonar.projectName="Shipping Service" \
+                        -Dsonar.projectVersion=1.0 \
+                        -Dsonar.sources=.
+                    '''
                     }
+
                 }
             }
         }
