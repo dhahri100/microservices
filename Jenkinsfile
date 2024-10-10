@@ -2,21 +2,30 @@ pipeline {
     agent any
 
     environment {
-        SCANNER_HOME = tool "SonarQube-Scanner"  // Assuming 'SonarQube-Scanner' tool is configured in Jenkins
-        APP_NAME = "microservices-currencyservice"
+        SCANNER_HOME = tool name: 'SonarQube-Scanner', type: 'hudson.plugins.sonar.SonarRunnerInstallation'
+        SONAR_PROJECT_KEY = "microservices-currencyservice"  // Specify your project key here
+        SONAR_PROJECT_NAME = "Currency Service"  // Optional: Give your project a name
+        SONAR_PROJECT_VERSION = "1.0"
+        APP_NAME = "currencyservice"  // The name of the image
         RELEASE = "1.0.0"
-        DOCKER_USER = "mouhib543"
-        DOCKER_PASS = 'dockerhub'
-        IMAGE_TAG = "${RELEASE}-${BUILD_NUMBER}"
+        DOCKER_USER = "mouhib19"  // DockerHub username
+        DOCKER_PASS = "dockerhub"  // DockerHub password
+        IMAGE_TAG = "${RELEASE}-${BUILD_NUMBER}"  // Image tag
     }
 
     stages {
-    
-        /*stage('SonarQube Analysis') {
+
+        stage('SonarQube Analysis') {
             steps {
                 script {
                     withSonarQubeEnv('SonarQube-Server') {
-                        sh "${SCANNER_HOME}/bin/sonar-scanner"  // Execute SonarQube scanner
+                        sh '''
+                            /var/lib/jenkins/tools/hudson.plugins.sonar.SonarRunnerInstallation/SonarQube-Scanner/bin/sonar-scanner \
+                            -Dsonar.projectKey=${SONAR_PROJECT_KEY} \
+                            -Dsonar.projectName="${SONAR_PROJECT_NAME}" \
+                            -Dsonar.projectVersion=${SONAR_PROJECT_VERSION} \
+                            -Dsonar.sources=.
+                        '''
                     }
                 }
             }
@@ -28,13 +37,13 @@ pipeline {
                     waitForQualityGate abortPipeline: true  // Wait for SonarQube Quality Gate result
                 }
             }
-        }*/
+        }
 
         stage('Build Docker Image') {
             steps {
                 script {
                     // Build the Docker image using the Dockerfile in the directory
-                    docker.build("${DOCKER_USER}/${APP_NAME}:${IMAGE_TAG}")
+                    docker.build("${DOCKER_USER}/microservices-${APP_NAME}:${IMAGE_TAG}")
                 }
             }
         }
@@ -43,7 +52,7 @@ pipeline {
             steps {
                 script {
                     // Perform Trivy image scan
-                    sh "docker run -v /var/run/docker.sock:/var/run/docker.sock aquasec/trivy image ${DOCKER_USER}/${APP_NAME}:${IMAGE_TAG} --no-progress --exit-code 0 --severity HIGH,CRITICAL --format table --scanners vuln --timeout 50m > trivy_${APP_NAME}.txt"
+                    sh "docker run -v /var/run/docker.sock:/var/run/docker.sock aquasec/trivy image ${DOCKER_USER}/microservices-${APP_NAME}:${IMAGE_TAG} --no-progress --exit-code 0 --severity HIGH,CRITICAL --format table --scanners vuln --timeout 50m | tee trivy_${APP_NAME}.txt"
                 }
             }
         }
@@ -51,9 +60,9 @@ pipeline {
         stage('Push Docker Image') {
             steps {
                 script {
-                    docker.withRegistry('', DOCKER_PASS) {
+                    docker.withRegistry('https://index.docker.io/v1/', DOCKER_PASS) {
                         // Push the Docker image to Docker Hub
-                        docker.image("${DOCKER_USER}/${APP_NAME}:${IMAGE_TAG}").push()
+                        docker.image("${DOCKER_USER}/microservices-${APP_NAME}:${IMAGE_TAG}").push()
                     }
                 }
             }
@@ -62,10 +71,16 @@ pipeline {
         stage ('Cleanup Artifact') {
             steps {
                 script {
-                        sh "docker rmi ${DOCKER_USER}/${APP_NAME}:${IMAGE_TAG}"  // Remove Docker image
-                    }
+                    // Remove Docker image locally
+                    sh "docker rmi ${DOCKER_USER}/microservices-${APP_NAME}:${IMAGE_TAG}"
                 }
-            
+            }
+        }
+    }
+
+    post {
+        always {
+            archiveArtifacts artifacts: "trivy_${APP_NAME}.txt", allowEmptyArchive: true
         }
     }
 }
