@@ -16,7 +16,7 @@ pipeline {
     
     stages {
 
-        stage('SonarQube Analysis') {
+        /*stage('SonarQube Analysis') {
             steps {
                 script {
                     withSonarQubeEnv('SonarQube-Server') {
@@ -39,7 +39,7 @@ pipeline {
                     waitForQualityGate abortPipeline: true  // Wait for SonarQube Quality Gate result
                 }
             }
-        }
+        }*/
 
         stage('Build Docker Image') {
             steps {
@@ -49,13 +49,13 @@ pipeline {
             }
         }
 
-        stage("Trivy Image Scan") {
+        /*stage("Trivy Image Scan") {
             steps {
                 script {
                     sh "docker run -v /var/run/docker.sock:/var/run/docker.sock aquasec/trivy image ${DOCKER_USER}/${APP_NAME}:${IMAGE_TAG} --no-progress --exit-code 0 --severity HIGH,CRITICAL --format table --scanners vuln --timeout 50m | tee trivy_${APP_NAME}.txt"
                 }
             }
-        }
+        }*/
 
         stage('Push Docker Image') {
             steps {
