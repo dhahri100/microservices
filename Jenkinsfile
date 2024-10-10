@@ -60,7 +60,7 @@ pipeline {
         stage('Push Docker Image') {
             steps {
                 script {
-                    docker.withRegistry('', DOCKER_PASS) {
+                    docker.withRegistry('https://index.docker.io/v1/', DOCKER_PASS) {
                         docker.image("${DOCKER_USER}/${APP_NAME}:${IMAGE_TAG}").push()
                     }
                 }
