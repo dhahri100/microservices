@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        //SCANNER_HOME = tool name: 'SonarQube-Scanner', type: 'hudson.plugins.sonar.SonarRunnerInstallation'
+        SCANNER_HOME = tool name: 'SonarQube-Scanner', type: 'hudson.plugins.sonar.SonarRunnerInstallation'
         APP_NAME = "shippingservice"
         RELEASE = "1.0.0"
         DOCKER_REPO = "microservices"
@@ -31,7 +31,6 @@ pipeline {
             }
         }
 
-        
         stage('Build Docker Image') {
             steps {
                 script {
@@ -77,5 +76,4 @@ pipeline {
             archiveArtifacts artifacts: "trivy_${APP_NAME}.txt", allowEmptyArchive: true
         }
     }
-
 }
