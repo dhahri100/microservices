@@ -8,7 +8,6 @@ pipeline {
         SONAR_PROJECT_VERSION = "1.0"
         APP_NAME = "shippingservice"
         RELEASE = "1.0.0"
-        DOCKER_REPO = "microservices"
         DOCKER_USER = "mouhib543"
         DOCKER_PASS = "dockerhub"  
         IMAGE_TAG = "${RELEASE}-${BUILD_NUMBER}"
