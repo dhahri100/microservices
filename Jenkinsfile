@@ -42,12 +42,11 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 script {
-                    dir('src') { 
                         docker.build("${DOCKER_USER}/microservices-${APP_NAME}:${IMAGE_TAG}")
                     }
                 }
             }
-        }
+        
 
         stage("Trivy Image Scan") {
             steps {
