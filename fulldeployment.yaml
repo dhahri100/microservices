@@ -22,7 +22,7 @@ spec:
       serviceAccountName: app-adservice
       containers:
       - name: server
-        image: mouhib543/microservices-adservice:1.0.0-6
+        image: mouhib19/microservices-adservice:1.0.0-10
         imagePullPolicy: Always 
         ports:
         - containerPort: 9555
