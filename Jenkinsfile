@@ -42,8 +42,9 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 script {
-                    // Build Docker image using Dockerfile in the directory
-                    docker.build("${DOCKER_USER}/${APP_NAME}:${IMAGE_TAG}")
+                    dir('src') { 
+                        docker.build("${DOCKER_USER}/microservices-${APP_NAME}:${IMAGE_TAG}")
+                    }
                 }
             }
         }
@@ -62,7 +63,7 @@ pipeline {
                 script {
                     docker.withRegistry('https://index.docker.io/v1/', DOCKER_PASS) {
                         // Push Docker image to Docker Hub
-                        docker.image("${DOCKER_USER}/${APP_NAME}:${IMAGE_TAG}").push()
+                        docker.image("${DOCKER_USER}/microservices-${APP_NAME}:${IMAGE_TAG}").push()
                     }
                 }
             }
@@ -72,7 +73,7 @@ pipeline {
             steps {
                 script {
                     // Remove Docker image locally
-                    sh "docker rmi ${DOCKER_USER}/${APP_NAME}:${IMAGE_TAG}"
+                    sh "docker rmi ${DOCKER_USER}/microservices-${APP_NAME}:${IMAGE_TAG}}"
                 }
             }
         }
