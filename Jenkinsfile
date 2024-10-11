@@ -3,7 +3,7 @@ pipeline {
 
     environment {
         SCANNER_HOME = tool name: 'SonarQube-Scanner', type: 'hudson.plugins.sonar.SonarRunnerInstallation'  // SonarQube scanner tool
-        JAVA_HOME = tool name: 'JDK 17' 
+        JAVA_HOME = tool name: 'JDK 11' 
         SONAR_PROJECT_KEY = "microservices-adservice"  // Specify your project key here
         SONAR_PROJECT_NAME = "Ad Service"  // Optional: Give your project a name
         SONAR_PROJECT_VERSION = "1.0"
