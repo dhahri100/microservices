@@ -258,7 +258,7 @@ spec:
       serviceAccountName: app-email
       containers:
       - name: server
-        image: mouhib19/microservices-emailservice:1.0.0-10
+        image: mouhib19/microservices-emailservice:1.0.0-2
         imagePullPolicy: Always 
         ports:
         - containerPort: 8080
