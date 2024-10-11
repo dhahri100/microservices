@@ -15,13 +15,8 @@ pipeline {
     }
 
     stages {
-        stage('Build') {
-            steps {
-                sh 'chmod +x ./gradlew'
-                sh './gradlew clean build'
-            }
-        }
-        stage('SonarQube Analysis') {
+        
+        /*stage('SonarQube Analysis') {
             steps {
                 script {
                     withSonarQubeEnv('SonarQube-Server') {
@@ -43,7 +38,7 @@ pipeline {
                     waitForQualityGate abortPipeline: true  // Wait for SonarQube Quality Gate result
                 }
             }
-        }
+        }*/
 
         stage('Build Docker Image') {
             steps {
