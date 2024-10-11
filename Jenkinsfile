@@ -42,17 +42,17 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 script {
-                        docker.build("${DOCKER_USER}/microservices-${APP_NAME}:${IMAGE_TAG}")
-                    }
+                    // Build the Docker image using the Dockerfile in the directory
+                    docker.build("${DOCKER_USER}/microservices-${APP_NAME}:${IMAGE_TAG}")
                 }
             }
-        
+        }
 
         stage("Trivy Image Scan") {
             steps {
                 script {
-                    // Trivy image scan
-                    sh "docker run -v /var/run/docker.sock:/var/run/docker.sock aquasec/trivy image ${DOCKER_USER}/${APP_NAME}:${IMAGE_TAG} --no-progress --exit-code 0 --severity HIGH,CRITICAL --format table --scanners vuln --timeout 50m | tee trivy_${APP_NAME}.txt"
+                    // Perform Trivy image scan
+                    sh "docker run -v /var/run/docker.sock:/var/run/docker.sock aquasec/trivy image ${DOCKER_USER}/microservices-${APP_NAME}:${IMAGE_TAG} --no-progress --exit-code 0 --severity HIGH,CRITICAL --format table --scanners vuln --timeout 50m | tee trivy_${APP_NAME}.txt"
                 }
             }
         }
@@ -61,18 +61,18 @@ pipeline {
             steps {
                 script {
                     docker.withRegistry('https://index.docker.io/v1/', DOCKER_PASS) {
-                        // Push Docker image to Docker Hub
+                        // Push the Docker image to Docker Hub
                         docker.image("${DOCKER_USER}/microservices-${APP_NAME}:${IMAGE_TAG}").push()
                     }
                 }
             }
         }
 
-        stage ('Cleanup Artifacts') {
+        stage('Cleanup Artifact') {
             steps {
                 script {
-                    // Remove Docker image locally
-                    sh "docker rmi ${DOCKER_USER}/microservices-${APP_NAME}:${IMAGE_TAG}}"
+                    // Remove Docker image
+                    sh "docker rmi ${DOCKER_USER}/microservices-${APP_NAME}:${IMAGE_TAG}"
                 }
             }
         }
