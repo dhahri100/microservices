@@ -43,11 +43,12 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 script {
-                    docker.build("${DOCKER_USER}/microservices-${APP_NAME}:${IMAGE_TAG}")
+                    dir('src') { 
+                        docker.build("${DOCKER_USER}/microservices-${APP_NAME}:${IMAGE_TAG}")
+                    }
                 }
             }
         }
-
         stage("Trivy Image Scan") {
             steps {
                 script {
@@ -59,13 +60,13 @@ pipeline {
         stage('Push Docker Image') {
             steps {
                 script {
-                    dir('src') { 
+                    
                         docker.withRegistry('https://index.docker.io/v1/', DOCKER_PASS) {
                             docker.image("${DOCKER_USER}/microservices-${APP_NAME}:${IMAGE_TAG}").push()
                         }
                     }
                 }
-            }
+            
 }
 
 
