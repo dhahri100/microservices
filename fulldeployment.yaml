@@ -184,7 +184,7 @@ spec:
       serviceAccountName: app-cart
       containers:
       - name: server
-        image: mouhib543/microservices-cartservice:1.0.0-10
+        image: mouhib19/microservices-cartservice:1.0.0-10
         imagePullPolicy: Always 
         ports:
         - containerPort: 7070
@@ -258,7 +258,7 @@ spec:
       serviceAccountName: app-email
       containers:
       - name: server
-        image: mouhib543/microservices-emailservice:1.0.0-5
+        image: mouhib19/microservices-emailservice:1.0.0-10
         imagePullPolicy: Always 
         ports:
         - containerPort: 8080
@@ -334,7 +334,7 @@ spec:
       serviceAccountName: app-currency
       containers:
       - name: server
-        image: mouhib543/microservices-currencyservice:1.0.0-5
+        image: mouhib19/microservices-currencyservice:1.0.0-2
         imagePullPolicy: Always 
         ports:
         - containerPort: 7000
@@ -410,7 +410,7 @@ spec:
       serviceAccountName: app-productcatalogue
       containers:
       - name: server
-        image: mouhib543/microservices-productcatalogservice:1.0.0-5
+        image: mouhib19/microservices-productcatalogservice:1.0.0-3
         imagePullPolicy: Always 
         ports:
         - containerPort: 3550
@@ -500,7 +500,7 @@ spec:
                 - ALL
             privileged: false
             readOnlyRootFilesystem: true
-          image: mouhib543/microservices-frontend:1.0.0-5
+          image: mouhib19/microservices-frontend:1.0.0-4
           imagePullPolicy: Always
           ports:
           - containerPort: 8080
@@ -572,7 +572,7 @@ spec:
       serviceAccountName: app-payment
       containers:
       - name: server
-        image: mouhib543/microservices-paymentservice:1.0.0-5
+        image: mouhib19/microservices-paymentservice:1.0.0-3
         imagePullPolicy: Always 
         ports:
         - containerPort: 50051
@@ -648,7 +648,7 @@ spec:
       serviceAccountName: app-recommandation
       containers:
       - name: server
-        image: mouhib543/microservices-recommendationservice:1.0.0-5
+        image: mouhib19/microservices-recommendationservice:1.0.0-3
         imagePullPolicy: Always 
         ports:
         - containerPort: 8080
@@ -815,7 +815,7 @@ spec:
               - ALL
           privileged: false
           readOnlyRootFilesystem: true
-        image: mouhib543/microservices-shippingservice:1.0.0-31
+        image: mouhib19/microservices-shippingservice:1.0.0-23
         ports:
         - containerPort: 50051
         env:
