@@ -5,7 +5,7 @@ pipeline {
         CREDENTIALS_ID = '85215780-f231-45ec-a1c5-304a7cd774ff'
         PROJECT_ID = 'calm-photon-436315-j1'
         CLUSTER_NAME = 'gke'
-        LOCATION = 'us-central1-c'
+        LOCATION = 'us-east1-c'
         NAMESPACE = 'prod' 
     }
 
