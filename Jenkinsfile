@@ -2,6 +2,7 @@ pipeline {
     agent any
 
     environment {
+        
         SCANNER_HOME = tool name: 'SonarQube-Scanner', type: 'hudson.plugins.sonar.SonarRunnerInstallation'
         SONAR_PROJECT_KEY = "cartservice"  // Specify your project key here
         SONAR_PROJECT_NAME = "Cart Service"  // Optional: Give your project a name
