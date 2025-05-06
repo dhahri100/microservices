@@ -58,18 +58,14 @@ pipeline {
             }
         }
 
-        stage('Push Docker Image') {
-            steps {
-                script {
-                                        withCredentials([usernamePassword(credentialsId: 'dockerhub', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
-                        docker.withRegistry('https://index.docker.io/v1/', DOCKER_USER, DOCKER_PASS) {
-                            docker.image("${DOCKER_USER}/microservices-${APP_NAME}:${IMAGE_TAG}").push()
-                        }
-                    }
-
-                    }
-                }
-            
+   stage('Push Docker Image') {
+    steps {
+        script {
+            docker.withRegistry('https://index.docker.io/v1/', 'docker-hub-credentials') {
+                docker.image("${DOCKER_USER}/microservices-${APP_NAME}:${IMAGE_TAG}").push()
+            }
+        }
+    }
 }
 
 
