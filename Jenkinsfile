@@ -92,7 +92,7 @@ pipeline {
         }
         stage(‘Deploy to Minikube’) {
                         steps {
-                        sh ‘kubectl apply -f my-react-deployments.yaml’
+                        sh ‘kubectl apply -f cartservice.yaml’
                         }
                     }
     }
