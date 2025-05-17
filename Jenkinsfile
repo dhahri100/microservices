@@ -78,9 +78,9 @@ pipeline {
                             docker.image("${DOCKER_USER}/microservices-${APP_NAME}:${IMAGE_TAG}").push()
                         }
                     }
-                }*/
+                }
             
-}
+}*/
 
 
         stage ('Cleanup Artifact') {
