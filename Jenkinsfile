@@ -90,9 +90,9 @@ pipeline {
                 }
             }
         }
-        stage(‘Deploy to Minikube’) {
+        stage('Deploy to Minikube') {
                         steps {
-                        sh ‘kubectl apply -f cartservice.yaml’
+                        sh 'kubectl apply -f cartservice.yaml'
                         }
                     }
     }
