@@ -90,6 +90,11 @@ pipeline {
                 }
             }
         }
+        stage(‘Deploy to Minikube’) {
+                        steps {
+                        sh ‘kubectl apply -f my-react-deployments.yaml’
+                        }
+                    }
     }
 
     post {
