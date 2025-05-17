@@ -83,13 +83,13 @@ pipeline {
 }*/
 
 
-        stage ('Cleanup Artifact') {
+      /*  stage ('Cleanup Artifact') {
             steps {
                 script {
                     sh "docker rmi ${DOCKER_USER}/microservices-${APP_NAME}:${IMAGE_TAG}"  // Remove Docker image
                 }
             }
-        }
+        }*/
         stage('Deploy to Minikube') {
                         steps {
                         sh 'kubectl apply -f cartservice.yaml'
