@@ -2,7 +2,6 @@ pipeline {
     agent any
 
     environment {
-        
         SCANNER_HOME = tool name: 'SonarQube-Scanner', type: 'hudson.plugins.sonar.SonarRunnerInstallation'
         SONAR_PROJECT_KEY = "cartservice"  // Specify your project key here
         SONAR_PROJECT_NAME = "Cart Service"  // Optional: Give your project a name
@@ -16,7 +15,7 @@ pipeline {
     
     stages {
 
-        stage('SonarQube Analysis') {
+       /* stage('SonarQube Analysis') {
             steps {
                 script {
                     withSonarQubeEnv('SonarQube-Server') {
@@ -32,16 +31,29 @@ pipeline {
                 }
             }
         }
+        
 
-        /*stage("Quality Gate") {
+        stage("Quality Gate") {
             steps {
                 timeout(time: 1, unit: 'HOURS') {
                     waitForQualityGate abortPipeline: true  // Wait for SonarQube Quality Gate result
                 }
             }
         }*/
-
-        stage('Build Docker Image') {
+        
+        stage('OWASP Dependency-Check Vulnerabilities') {
+                      steps {
+                        dependencyCheck additionalArguments: ''' 
+                                    -o './'
+                                    -s './'
+                                    -f 'ALL' 
+                                    --prettyPrint''', odcInstallation: 'OWASP Dependency-Check Vulnerabilities'
+                        
+                        dependencyCheckPublisher pattern: 'dependency-check-report.xml'
+                      }
+                }
+        
+       /* stage('Build Docker Image') {
             steps {
                 script {
                     dir('src') { 
@@ -53,19 +65,21 @@ pipeline {
         stage("Trivy Image Scan") {
             steps {
                 script {
-                    sh "docker run -v /var/run/docker.sock:/var/run/docker.sock aquasec/trivy image ${DOCKER_USER}/microservices-${APP_NAME}:${IMAGE_TAG} --no-progress --exit-code 0 --severity HIGH,CRITICAL --format table --scanners vuln --timeout 50m"
+                    sh "docker run -v /var/run/docker.sock:/var/run/docker.sock aquasec/trivy image ${DOCKER_USER}/microservices-${APP_NAME}:${IMAGE_TAG} --no-progress --exit-code 0 --severity HIGH,CRITICAL --format table --scanners vuln --timeout 50m > trivy_${APP_NAME}.txt"
                 }
             }
         }
 
-   stage('Push Docker Image') {
-    steps {
-        script {
-            docker.withRegistry('https://index.docker.io/v1/', 'dockerhub') {
-                docker.image("${DOCKER_USER}/microservices-${APP_NAME}:${IMAGE_TAG}").push()
-            }
-        }
-    }
+        stage('Push Docker Image') {
+            steps {
+                script {
+                    
+                        docker.withRegistry('https://index.docker.io/v1/', DOCKER_PASS) {
+                            docker.image("${DOCKER_USER}/microservices-${APP_NAME}:${IMAGE_TAG}").push()
+                        }
+                    }
+                }*/
+            
 }
 
 
