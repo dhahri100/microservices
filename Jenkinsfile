@@ -15,18 +15,19 @@ pipeline {
 
     stages {
         
-        stage('SonarQube Analysis') {
+         /* stage('SonarQube Analysis') {
             steps {
                 script {
                     withSonarQubeEnv('SonarQube-Server') {
-                        sh '''
-                            ${SCANNER_HOME}/bin/sonar-scanner \
-                            -Dsonar.projectKey=${SONAR_PROJECT_KEY} \
-                            -Dsonar.projectName="${SONAR_PROJECT_NAME}" \
-                            -Dsonar.projectVersion=${SONAR_PROJECT_VERSION} \
-                            -Dsonar.sources=.
-                        '''  // SonarQube scan
+                    sh '''
+                        ${SCANNER_HOME}/bin/sonar-scanner \
+                        -Dsonar.projectKey=checkoutservice \
+                        -Dsonar.projectName="Checkout Service" \
+                        -Dsonar.projectVersion=1.0 \
+                        -Dsonar.sources=.
+                    '''
                     }
+
                 }
             }
         }
@@ -38,6 +39,17 @@ pipeline {
                 }
             }
         }
+        stage('OWASP Dependency-Check Vulnerabilities') {
+                      steps {
+                        dependencyCheck additionalArguments: ''' 
+                                    -o './'
+                                    -s './'
+                                    -f 'ALL' 
+                                    --prettyPrint''', odcInstallation: 'Owasp'
+                        
+                        dependencyCheckPublisher pattern: 'dependency-check-report.xml'
+                      }
+                }
 
         stage('Build Docker Image') {
             steps {
@@ -76,6 +88,15 @@ pipeline {
                 }
             }
         }
+        stage('Deploy to Minikube') {
+                        steps {
+                       sh '''
+                        export KUBECONFIG=/home/jenkins/.kube/config
+                        kubectl config use-context minikube
+                        kubectl apply -f checkoutservice.yaml
+                    '''
+                        }
+                    }
     }
 
     post {
