@@ -25,7 +25,8 @@ pipeline {
                         -Dsonar.projectKey=frontend \
                         -Dsonar.projectName="frontend Service" \
                         -Dsonar.projectVersion=1.0 \
-                        -Dsonar.sources=.
+                        -Dsonar.sources=. \
+                        -Dsonar.nodejs.executable=/opt/nodejs/bin/node
                     '''
                     }
 
