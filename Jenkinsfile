@@ -15,7 +15,7 @@ pipeline {
 
     stages {
         
-         /* stage('SonarQube Analysis') {
+          stage('SonarQube Analysis') {
             steps {
                 script {
                     withSonarQubeEnv('SonarQube-Server') {
