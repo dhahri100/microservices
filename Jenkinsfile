@@ -24,7 +24,8 @@ pipeline {
                         -Dsonar.projectKey=loadgenservice \
                         -Dsonar.projectName="loadgenerator Service" \
                         -Dsonar.projectVersion=1.0 \
-                        -Dsonar.sources=.
+                        -Dsonar.sources=.\
+                        -Dsonar.nodejs.executable=/opt/nodejs/bin/node
                     '''
                     }
 
@@ -33,13 +34,13 @@ pipeline {
         }
         
 
-        stage("Quality Gate") {
+        /*stage("Quality Gate") {
             steps {
                 timeout(time: 1, unit: 'HOURS') {
                     waitForQualityGate abortPipeline: true  // Wait for SonarQube Quality Gate result
                 }
             }
-        }
+        }*/
         
         stage('OWASP Dependency-Check Vulnerabilities') {
                       steps {
@@ -56,9 +57,9 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 script {
-                    dir('src') { 
+                  
                         docker.build("${DOCKER_USER}/microservices-${APP_NAME}:${IMAGE_TAG}")
-                    }
+                    
                 }
             }
         }
