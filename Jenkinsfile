@@ -102,14 +102,7 @@ pipeline {
     }
 
 
-        stage ('Cleanup Artifact') {
-            steps {
-                script {
-                    sh "docker rmi ${DOCKER_USER}/microservices-${APP_NAME}:${IMAGE_TAG}"
-                }
-            }
-        }
-    }
+  
 
     post {
         always {
