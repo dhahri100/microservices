@@ -24,7 +24,8 @@ pipeline {
                         -Dsonar.projectKey=productcatalogservice \
                         -Dsonar.projectName="productcatalog Service" \
                         -Dsonar.projectVersion=1.0 \
-                        -Dsonar.sources=.
+                        -Dsonar.sources=.\
+                        -Dsonar.nodejs.executable=/opt/nodejs/bin/node
                     '''
                     }
 
@@ -56,9 +57,9 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 script {
-                    dir('src') { 
+                    
                         docker.build("${DOCKER_USER}/microservices-${APP_NAME}:${IMAGE_TAG}")
-                    }
+                    
                 }
             }
         }
