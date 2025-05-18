@@ -11,6 +11,7 @@ pipeline {
         DOCKER_USER = "mouhib19"  // Your DockerHub username
         DOCKER_PASS = "dockerhub"  
         IMAGE_TAG = "${RELEASE}-${BUILD_NUMBER}"
+        SONAR_SCANNER_OPTS = "-Dsonar.nodejs.executable=node"
     }
 
    stages {
