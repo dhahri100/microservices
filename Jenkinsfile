@@ -13,23 +13,25 @@ pipeline {
         IMAGE_TAG = "${RELEASE}-${BUILD_NUMBER}"
     }
 
-    stages {
+   stages {
 
         stage('SonarQube Analysis') {
             steps {
                 script {
                     withSonarQubeEnv('SonarQube-Server') {
-                        sh '''
-                            /var/lib/jenkins/tools/hudson.plugins.sonar.SonarRunnerInstallation/SonarQube-Scanner/bin/sonar-scanner \
-                            -Dsonar.projectKey=${SONAR_PROJECT_KEY} \
-                            -Dsonar.projectName="${SONAR_PROJECT_NAME}" \
-                            -Dsonar.projectVersion=${SONAR_PROJECT_VERSION} \
-                            -Dsonar.sources=.
-                        '''
+                    sh '''
+                        ${SCANNER_HOME}/bin/sonar-scanner \
+                        -Dsonar.projectKey=frontend \
+                        -Dsonar.projectName="frontend Service" \
+                        -Dsonar.projectVersion=1.0 \
+                        -Dsonar.sources=.
+                    '''
                     }
+
                 }
             }
         }
+        
 
         stage("Quality Gate") {
             steps {
@@ -38,19 +40,32 @@ pipeline {
                 }
             }
         }
-
+        
+        stage('OWASP Dependency-Check Vulnerabilities') {
+                      steps {
+                        dependencyCheck additionalArguments: ''' 
+                                    -o './'
+                                    -s './'
+                                    -f 'ALL' 
+                                    --prettyPrint''', odcInstallation: 'Owasp'
+                        
+                        dependencyCheckPublisher pattern: 'dependency-check-report.xml'
+                      }
+                }
+        
         stage('Build Docker Image') {
             steps {
                 script {
-                    docker.build("${DOCKER_USER}/microservices-${APP_NAME}:${IMAGE_TAG}")
+                    dir('src') { 
+                        docker.build("${DOCKER_USER}/microservices-${APP_NAME}:${IMAGE_TAG}")
+                    }
                 }
             }
         }
-
-        stage("Trivy Image Scan") {
+      stage("Trivy Image Scan") {
             steps {
                 script {
-                    sh "docker run -v /var/run/docker.sock:/var/run/docker.sock aquasec/trivy image ${DOCKER_USER}/microservices-${APP_NAME}:${IMAGE_TAG} --no-progress --exit-code 0 --severity HIGH,CRITICAL --format table --scanners vuln --timeout 50m | tee trivy_${APP_NAME}.txt"
+                    sh "docker run -v /var/run/docker.sock:/var/run/docker.sock aquasec/trivy image ${DOCKER_USER}/microservices-${APP_NAME}:${IMAGE_TAG} --no-progress --exit-code 0 --severity HIGH,CRITICAL --format table --scanners vuln --timeout 50m > trivy_${APP_NAME}.txt"
                 }
             }
         }
@@ -58,20 +73,32 @@ pipeline {
         stage('Push Docker Image') {
             steps {
                 script {
-                    docker.withRegistry('https://index.docker.io/v1/', DOCKER_PASS) {
-                        docker.image("${DOCKER_USER}/microservices-${APP_NAME}:${IMAGE_TAG}").push()
+                    
+                        docker.withRegistry('https://index.docker.io/v1/', DOCKER_PASS) {
+                            docker.image("${DOCKER_USER}/microservices-${APP_NAME}:${IMAGE_TAG}").push()
+                        }
                     }
                 }
-            }
-        }
+            
+}
+
 
         stage ('Cleanup Artifact') {
             steps {
                 script {
-                    sh "docker rmi ${DOCKER_USER}/microservices-${APP_NAME}:${IMAGE_TAG}"
+                    sh "docker rmi ${DOCKER_USER}/microservices-${APP_NAME}:${IMAGE_TAG}"  // Remove Docker image
                 }
             }
         }
+       stage('Deploy to Minikube') {
+                        steps {
+                       sh '''
+                        export KUBECONFIG=/home/jenkins/.kube/config
+                        kubectl config use-context minikube
+                        kubectl apply -f frontend.yaml
+                    '''
+                        }
+                    }
     }
 
     post {
