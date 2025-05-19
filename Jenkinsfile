@@ -24,7 +24,8 @@ pipeline {
                         -Dsonar.projectKey=adservice \
                         -Dsonar.projectName="ad Service" \
                         -Dsonar.projectVersion=1.0 \
-                        -Dsonar.sources=.
+                        -Dsonar.sources=.\
+                        -Dsonar.nodejs.executable=/opt/nodejs/bin/node  
                     '''
                     }
 
