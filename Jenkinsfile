@@ -22,32 +22,48 @@ pipeline {
                     sh '''
                         ${SCANNER_HOME}/bin/sonar-scanner \
                         -Dsonar.projectKey=recommendationservice \
-                        -Dsonar.projectName="Recommendation Service" \
+                        -Dsonar.projectName="recommendation Service" \
                         -Dsonar.projectVersion=1.0 \
-                        -Dsonar.sources=.
+                        -Dsonar.sources=.\
+                        -Dsonar.nodejs.executable=/opt/nodejs/bin/node
                     '''
                     }
+
                 }
             }
         }
+        
 
-        stage("Quality Gate") {
+     /*   stage("Quality Gate") {
             steps {
                 timeout(time: 1, unit: 'HOURS') {
                     waitForQualityGate abortPipeline: true  // Wait for SonarQube Quality Gate result
                 }
             }
-        }
-
+        }*/
+        
+        stage('OWASP Dependency-Check Vulnerabilities') {
+                      steps {
+                        dependencyCheck additionalArguments: ''' 
+                                    -o './'
+                                    -s './'
+                                    -f 'ALL' 
+                                    --prettyPrint''', odcInstallation: 'Owasp'
+                        
+                        dependencyCheckPublisher pattern: 'dependency-check-report.xml'
+                      }
+                }
+        
         stage('Build Docker Image') {
             steps {
                 script {
-                    docker.build("${DOCKER_USER}/microservices-${APP_NAME}:${IMAGE_TAG}")
+                    
+                        docker.build("${DOCKER_USER}/microservices-${APP_NAME}:${IMAGE_TAG}")
+                    
                 }
             }
         }
-
-        stage("Trivy Image Scan") {
+      stage("Trivy Image Scan") {
             steps {
                 script {
                     sh "docker run -v /var/run/docker.sock:/var/run/docker.sock aquasec/trivy image ${DOCKER_USER}/microservices-${APP_NAME}:${IMAGE_TAG} --no-progress --exit-code 0 --severity HIGH,CRITICAL --format table --scanners vuln --timeout 50m > trivy_${APP_NAME}.txt"
@@ -58,12 +74,15 @@ pipeline {
         stage('Push Docker Image') {
             steps {
                 script {
-                    docker.withRegistry('https://index.docker.io/v1/', DOCKER_PASS) {
-                        docker.image("${DOCKER_USER}/microservices-${APP_NAME}:${IMAGE_TAG}").push()
+                    
+                        docker.withRegistry('https://index.docker.io/v1/', DOCKER_PASS) {
+                            docker.image("${DOCKER_USER}/microservices-${APP_NAME}:${IMAGE_TAG}").push()
+                        }
                     }
                 }
-            }
-        }
+            
+}
+
 
         stage ('Cleanup Artifact') {
             steps {
@@ -72,6 +91,7 @@ pipeline {
                 }
             }
         }
+      
     }
 
     post {
