@@ -16,29 +16,41 @@ pipeline {
 
     stages {
         
-        /*stage('SonarQube Analysis') {
+          stage('SonarQube Analysis') {
             steps {
                 script {
                     withSonarQubeEnv('SonarQube-Server') {
-                        sh '''
-                            ${SCANNER_HOME}/bin/sonar-scanner \
-                            -Dsonar.projectKey=${SONAR_PROJECT_KEY} \
-                            -Dsonar.projectName="${SONAR_PROJECT_NAME}" \
-                            -Dsonar.projectVersion=${SONAR_PROJECT_VERSION} \
-                            -Dsonar.sources=.
-                        '''
+                    sh '''
+                        ${SCANNER_HOME}/bin/sonar-scanner \
+                        -Dsonar.projectKey=adservice \
+                        -Dsonar.projectName="ad Service" \
+                        -Dsonar.projectVersion=1.0 \
+                        -Dsonar.sources=.
+                    '''
                     }
+
                 }
             }
         }
 
-        stage("Quality Gate") {
+        /*stage("Quality Gate") {
             steps {
                 timeout(time: 1, unit: 'HOURS') {
-                    waitForQualityGate abortPipeline: true  // Wait for SonarQube Quality Gate result
+                    waitForQualityGate abortPipeline: true  // Wait for SonarQube quality gate
                 }
             }
         }*/
+        stage('OWASP Dependency-Check Vulnerabilities') {
+                      steps {
+                        dependencyCheck additionalArguments: ''' 
+                                    -o './'
+                                    -s './'
+                                    -f 'ALL' 
+                                    --prettyPrint''', odcInstallation: 'Owasp'
+                        
+                        dependencyCheckPublisher pattern: 'dependency-check-report.xml'
+                      }
+                }
 
         stage('Build Docker Image') {
             steps {
@@ -77,8 +89,16 @@ pipeline {
                 }
             }
         }
+        stage('Deploy to Minikube') {
+                        steps {
+                       sh '''
+                        export KUBECONFIG=/home/jenkins/.kube/config
+                        kubectl config use-context minikube
+                        kubectl apply -f adservice.yaml
+                    '''
+                        }
+                    }
     }
-
     post {
         always {
             archiveArtifacts artifacts: "trivy_${APP_NAME}.txt", allowEmptyArchive: true
